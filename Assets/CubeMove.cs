@@ -27,7 +27,13 @@ public class CubeMove : MonoBehaviour
     {//Faz a leitura do input do mouse em World points, fiz essa variavel para facilitar a reescrita
         ScreenToWorld = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));// (Input.mousePosition);
         ScreenToVP = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-        if (!attack){transform.rotation = Quaternion.Lerp(transform.rotation, Camera.main.transform.rotation, velocidade);}
+        if (!attack){
+            //transform.rotation = Quaternion.Lerp(transform.rotation, Camera.main.transform.rotation, velocidade);
+            iTween.RotateTo(gameObject, iTween.Hash("rotation", new Vector3(0, 0, 0), 
+                    "time", 3,
+                    "islocal", true,
+                    "easetype", iTween.EaseType.linear));
+            }
         if (Input.GetMouseButtonDown(0)){
             mouseDown = true; //ativa a variavel para iniciar a leitura do movimento do dedo)
             StartPos = new Vector3(ScreenToWorld.x,ScreenToWorld.y, 0);
@@ -48,13 +54,15 @@ public class CubeMove : MonoBehaviour
             
             RotX = ScreenToVP.x - StartRot.x;
             RotY = ScreenToVP.y - StartRot.y;
-            TRotX = transform.localRotation.eulerAngles.x - RotY*150;
-            TRotZ = transform.localRotation.eulerAngles.z + RotX*30;
+            iTween.RotateAdd(gameObject, (new Vector3(-RotY*200, 0, RotX*50)), 0);
+            //TRotX = transform.localRotation.eulerAngles.x - RotY*150;
+            //TRotZ = transform.localRotation.eulerAngles.z + RotX*30;
+            
             float ClampRotX = Mathf.Clamp((TRotX <= 180) ? TRotX : -(360 - TRotX), -40, 90);
             float ClampRotZ = Mathf.Clamp((TRotZ <= 180) ? TRotZ : -(360 - TRotZ), -10, 10);            
-            transform.localRotation = Quaternion.Euler(new Vector3(ClampRotX, transform.localRotation.eulerAngles.y, ClampRotZ));
+            //transform.localRotation = Quaternion.Euler(new Vector3(ClampRotX, transform.localRotation.eulerAngles.y, ClampRotZ));
             StartRot = new Vector3(ScreenToVP.x, ScreenToVP.y, 0);
-            if(TRotX > 45 && RotY < 0){attack = true; Attack();}
+            //if(TRotX > 45 && RotY < 0){attack = true; Attack();}
         } 
 
         void Attack(){
